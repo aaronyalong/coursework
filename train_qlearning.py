@@ -1,7 +1,8 @@
 from auxFunctions import getState, createEmptyQTable, maxAction, save_obj
-import gym
+import gymnasium as gym
 import random
 import numpy as np
+import csv
 
 env = gym.make('MountainCar-v0')
 env._max_episode_steps = 1000
@@ -10,19 +11,22 @@ env._max_episode_steps = 1000
 Q = createEmptyQTable()
 
 # Hyperparameters 
-alpha = 0.1 # Learning Rate
+# alpha = 0.1 # Learning Rate
+alpha = 0.2 # Learning Rate
 gamma = 0.9 # Discount Factor 
 epsilon = 1 # e-Greedy 
-episodes = 50000 # number of episodes
+# episodes = 50000 
+episodes = 10000 
 
 score = 0
 # Variable to keep track of the total score obtained
 # at each episode to plot it later
 total_score = np.zeros(episodes)
+avg100 = np.zeros(episodes)
 
 for i in range(episodes):
     done = False
-    observation = env.reset()
+    observation, info = env.reset()
     state = getState(observation)
     
     if i % 500 == 0:
@@ -39,7 +43,8 @@ for i in range(episodes):
             action = maxAction(Q, state)
         
         # Observe next state based on 
-        next_observation, reward, done, info = env.step(action)
+        next_observation, reward, terminated, truncated, info = env.step(action)
+        done = terminated or truncated
         next_state = getState(next_observation)
         
         # Add reward to the score of the episode
@@ -56,8 +61,17 @@ for i in range(episodes):
 
     # Save score for this episode
     total_score[i] = score
+
+    avg100[i] = np.mean(total_score[max(0, i-99):i+1])
     # Reduce epsilon 
     epsilon = epsilon - 2/episodes if epsilon > 0.01 else 0.01
+    #epsilon = max(0.01, epsilon * 0.995)
 
 # Save Q-table as .pkl file
 save_obj(Q, 'Q-table-Q-Learning')
+
+with open("results_qlmc_4.csv", "w", newline="") as f:
+    w = csv.writer(f)
+    w.writerow(["episode", "return", "avg100"])
+    for ep in range(episodes):
+        w.writerow([ep+1, total_score[ep], avg100[ep]])

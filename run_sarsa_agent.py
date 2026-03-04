@@ -1,5 +1,5 @@
 from auxFunctions import getState, load_obj, maxAction
-import gym
+import gymnasium as gym
 
 env = gym.make('MountainCar-v0')
 # Set the max step to 200

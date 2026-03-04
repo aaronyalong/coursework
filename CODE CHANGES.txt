@@ -1,0 +1,23 @@
+All the steps/changes to code:
+
+Migrated to Gymnasium from Gym.
+
+Updated API calls (reset, step).
+
+Implemented SARSA learning rule.
+
+Added rolling performance metrics.
+
+Added CSV logging.
+
+Tuned α, γ, and ε schedule.
+
+Reduced episodes for tuning experiments.
+
+Extended implementation to FrozenLake.
+
+Replaced discretized dictionary Q-table with NumPy Q-table for discrete environment.
+
+Added plotting utilities.
+
+There are all the csv files, and pngs for all my plots and data still included here in the folder.
